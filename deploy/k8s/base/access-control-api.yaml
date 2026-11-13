@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: access-control-api
+  labels:
+    app.kubernetes.io/name: access-control-api
+    app.kubernetes.io/part-of: accesshub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: access-control-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: access-control-api
+        app.kubernetes.io/part-of: accesshub
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: access-control-api
+          image: accesshub/accesscontrol
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: grpc
+              containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+            - name: GRPC_PORT
+              value: "8081"
+            - name: ConnectionStrings__accesscontroldb
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: accesscontroldb
+            - name: ConnectionStrings__messaging
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: messaging
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 15
+            failureThreshold: 4
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            failureThreshold: 30
+            periodSeconds: 2
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: access-control-api
+  labels:
+    app.kubernetes.io/name: access-control-api
+spec:
+  selector:
+    app.kubernetes.io/name: access-control-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: grpc
+      port: 8081
+      targetPort: grpc

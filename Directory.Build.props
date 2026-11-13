@@ -1,0 +1,31 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- CS1591: XML docs are required only on BuildingBlocks and Contracts public APIs (see below), not on every public member of services. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <!-- BuildingBlocks and Contracts are shared APIs: missing XML docs are build errors there. -->
+  <PropertyGroup Condition="($(MSBuildProjectName.StartsWith('BuildingBlocks.')) Or $(MSBuildProjectName.StartsWith('Contracts.'))) And !$(MSBuildProjectName.EndsWith('Tests'))">
+    <NoWarn>$(NoWarn.Replace('CS1591', ''))</NoWarn>
+  </PropertyGroup>
+
+  <!-- Container images via `dotnet publish /t:PublishContainer` (no Dockerfiles): accesshub/cardholder, accesshub/gateway, ... -->
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Api')) Or '$(MSBuildProjectName)' == 'Gateway' Or '$(MSBuildProjectName)' == 'SiteSimulator'">
+    <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+    <ContainerRepository>accesshub/$(MSBuildProjectName.Replace('.Api', '').ToLowerInvariant())</ContainerRepository>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('Tests'))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+</Project>

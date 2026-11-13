@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="NetArchTest.Rules" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\BuildingBlocks\BuildingBlocks.Domain\BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\BuildingBlocks.Application\BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\src\BuildingBlocks\BuildingBlocks.Infrastructure\BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Contracts\Contracts.IntegrationEvents\Contracts.IntegrationEvents.csproj" />
+    <ProjectReference Include="..\..\src\Contracts\Contracts.Grpc\Contracts.Grpc.csproj" />
+    <ProjectReference Include="..\..\src\Services\Cardholder\Cardholder.Api\Cardholder.Api.csproj" />
+    <ProjectReference Include="..\..\src\Services\AccessControl\AccessControl.Api\AccessControl.Api.csproj" />
+    <ProjectReference Include="..\..\src\Services\EventIngestion\EventIngestion.Api\EventIngestion.Api.csproj" />
+    <ProjectReference Include="..\..\src\Services\Alarm\Alarm.Api\Alarm.Api.csproj" />
+    <ProjectReference Include="..\..\src\SiteSimulator\SiteSimulator.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: accesshub
+resources:
+  - ../../base
+  - autoscaling.yaml
+  - disruption-budgets.yaml
+images:
+  - { name: accesshub/cardholder, newTag: "1.0.0" }
+  - { name: accesshub/accesscontrol, newTag: "1.0.0" }
+  - { name: accesshub/eventingestion, newTag: "1.0.0" }
+  - { name: accesshub/alarm, newTag: "1.0.0" }
+  - { name: accesshub/gateway, newTag: "1.0.0" }
+# Every service is safe to run with several replicas: AccessControl replicas each poll the shared change log,
+# the alarm hub uses the Redis backplane, and consumers are idempotent.
+replicas:
+  - { name: cardholder-api, count: 2 }
+  - { name: access-control-api, count: 2 }
+  - { name: event-ingestion-api, count: 3 }
+  - { name: alarm-api, count: 2 }
+  - { name: gateway, count: 3 }

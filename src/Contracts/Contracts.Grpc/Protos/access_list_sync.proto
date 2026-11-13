@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package accesshub.sync.v1;
+
+option csharp_namespace = "AccessHub.Contracts.Grpc.Sync.V1";
+
+import "google/protobuf/timestamp.proto";
+
+// Distributes a site's access list to its site controller.
+// Authentication: x-site-id and x-api-key metadata. A site can only read its own list.
+service AccessListSync {
+  // Streams the full access list in chunks. The last chunk carries the sequence the snapshot reflects.
+  rpc GetSnapshot (GetSnapshotRequest) returns (stream SnapshotChunk);
+
+  // Sends every change after from_sequence in order, then stays open and sends new changes as they commit,
+  // plus a heartbeat every 15 seconds. Fails with FAILED_PRECONDITION if from_sequence is older than the retained log.
+  rpc StreamChanges (StreamChangesRequest) returns (stream ChangeStreamMessage);
+}
+
+message GetSnapshotRequest {
+}
+
+message SnapshotChunk {
+  string time_zone_id = 1;
+  repeated AccessListEntry entries = 2;
+  bool is_last = 3;
+  // Set on the last chunk: the change sequence the snapshot reflects.
+  int64 sequence = 4;
+}
+
+message StreamChangesRequest {
+  int64 from_sequence = 1;
+}
+
+message ChangeStreamMessage {
+  oneof kind {
+    AccessListChange change = 1;
+    Heartbeat heartbeat = 2;
+  }
+}
+
+message Heartbeat {
+  int64 latest_sequence = 1;
+  google.protobuf.Timestamp sent_at = 2;
+}
+
+message AccessListChange {
+  int64 sequence = 1;
+  EntityKind kind = 2;
+  string entity_id = 3;
+  // Absent when the entity was removed from this site's list.
+  AccessListEntry entry = 4;
+  bool is_tombstone = 5;
+  google.protobuf.Timestamp changed_at = 6;
+}
+
+enum EntityKind {
+  ENTITY_KIND_UNSPECIFIED = 0;
+  ENTITY_KIND_DOOR = 1;
+  ENTITY_KIND_ACCESS_GROUP = 2;
+  ENTITY_KIND_CARD = 3;
+}
+
+message AccessListEntry {
+  EntityKind kind = 1;
+  string entity_id = 2;
+  oneof payload {
+    DoorEntry door = 3;
+    AccessGroupEntry access_group = 4;
+    CardEntry card = 5;
+  }
+}
+
+message DoorEntry {
+  string name = 1;
+}
+
+message AccessGroupEntry {
+  string name = 1;
+  repeated GroupDoorAccess doors = 2;
+}
+
+message GroupDoorAccess {
+  string door_id = 1;
+  repeated TimeWindow windows = 2;
+}
+
+// Weekly window in the site's local time; start inclusive, end exclusive, minutes after midnight.
+message TimeWindow {
+  int32 day_of_week = 1;
+  int32 start_minute = 2;
+  int32 end_minute = 3;
+}
+
+message CardEntry {
+  string card_number = 1;
+  string cardholder_id = 2;
+  bool is_revoked = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  bool cardholder_active = 5;
+  repeated string access_group_ids = 6;
+}

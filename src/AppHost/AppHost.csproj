@@ -1,0 +1,25 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AccessHub.AppHost</RootNamespace>
+    <!-- Run with plain `dotnet run` (DCP and the dashboard come from NuGet). The CLI bundle's run hook trusts the HTTPS
+         dev certificate in the OS trust store, which the http-only launch profile does not need. -->
+    <AspireUseCliBundle>false</AspireUseCliBundle>
+    <NoWarn>$(NoWarn);ASPIRE010</NoWarn>
+    <UserSecretsId>accesshub-apphost-6c1f2b1e</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Services\Cardholder\Cardholder.Api\Cardholder.Api.csproj" />
+    <ProjectReference Include="..\Services\AccessControl\AccessControl.Api\AccessControl.Api.csproj" />
+    <ProjectReference Include="..\Services\EventIngestion\EventIngestion.Api\EventIngestion.Api.csproj" />
+    <ProjectReference Include="..\Services\Alarm\Alarm.Api\Alarm.Api.csproj" />
+    <ProjectReference Include="..\Gateway\Gateway.csproj" />
+    <ProjectReference Include="..\SiteSimulator\SiteSimulator.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+    <PackageReference Include="Aspire.Hosting.Redis" />
+    <PackageReference Include="Aspire.Hosting.JavaScript" />
+  </ItemGroup>
+</Project>

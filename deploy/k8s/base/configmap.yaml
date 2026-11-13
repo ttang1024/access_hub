@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: accesshub-config
+data:
+  ASPNETCORE_ENVIRONMENT: Production
+  Auth__Authority: https://auth.example.com/realms/accesshub
+  Auth__Audience: accesshub-api
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector.observability:4317
+  OTEL_SERVICE_NAME_PREFIX: accesshub
+  Cors__Origins__0: https://accesshub.example.com

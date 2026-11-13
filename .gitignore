@@ -1,0 +1,87 @@
+# ---- .NET build output ----
+bin/
+obj/
+artifacts/
+*.nupkg
+*.snupkg
+*.binlog
+msbuild.log
+
+# ---- Test results and coverage ----
+TestResults/
+*.trx
+coverage/
+coverage*.json
+coverage*.xml
+*.coverage
+*.coveragexml
+lcov.info
+
+# ---- IDEs and editors ----
+.vs/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+*.swp
+*.swo
+*~
+
+# ---- Secrets and local configuration (never commit) ----
+.env
+.env.*
+!.env.example
+*.env
+!*.example.env
+appsettings.*.local.json
+appsettings.Local.json
+secrets.json
+*.pfx
+*.key
+*.pem
+
+# ---- SiteSimulator local state (SQLite access list copy and event buffer) ----
+simulator-data/
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# ---- Aspire ----
+.aspire/
+aspire-manifest.json
+
+# ---- Dashboard (Node / Vite) ----
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+.vite/
+.eslintcache
+npm-debug.log*
+*.local
+
+# ---- k6 load test output ----
+tests/load/results/
+tests/load/*.json
+tests/load/*.csv
+tests/load/*.html
+
+# ---- Logs and temp files ----
+*.log
+logs/
+*.tmp
+*.pid
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+Desktop.ini
+

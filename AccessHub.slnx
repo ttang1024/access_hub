@@ -1,0 +1,57 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AppHost/AppHost.csproj" />
+    <Project Path="src/Gateway/Gateway.csproj" />
+    <Project Path="src/ServiceDefaults/ServiceDefaults.csproj" />
+    <Project Path="src/SiteSimulator/SiteSimulator.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Application/BuildingBlocks.Application.csproj" />
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Domain/BuildingBlocks.Domain.csproj" />
+    <Project Path="src/BuildingBlocks/BuildingBlocks.Infrastructure/BuildingBlocks.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Contracts/">
+    <Project Path="src/Contracts/Contracts.Grpc/Contracts.Grpc.csproj" />
+    <Project Path="src/Contracts/Contracts.IntegrationEvents/Contracts.IntegrationEvents.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/AccessControl/">
+    <Project Path="src/Services/AccessControl/AccessControl.Api/AccessControl.Api.csproj" />
+    <Project Path="src/Services/AccessControl/AccessControl.Application/AccessControl.Application.csproj" />
+    <Project Path="src/Services/AccessControl/AccessControl.Domain/AccessControl.Domain.csproj" />
+    <Project Path="src/Services/AccessControl/AccessControl.Infrastructure/AccessControl.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Alarm/">
+    <Project Path="src/Services/Alarm/Alarm.Api/Alarm.Api.csproj" />
+    <Project Path="src/Services/Alarm/Alarm.Application/Alarm.Application.csproj" />
+    <Project Path="src/Services/Alarm/Alarm.Domain/Alarm.Domain.csproj" />
+    <Project Path="src/Services/Alarm/Alarm.Infrastructure/Alarm.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Cardholder/">
+    <Project Path="src/Services/Cardholder/Cardholder.Api/Cardholder.Api.csproj" />
+    <Project Path="src/Services/Cardholder/Cardholder.Application/Cardholder.Application.csproj" />
+    <Project Path="src/Services/Cardholder/Cardholder.Domain/Cardholder.Domain.csproj" />
+    <Project Path="src/Services/Cardholder/Cardholder.Infrastructure/Cardholder.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/EventIngestion/">
+    <Project Path="src/Services/EventIngestion/EventIngestion.Api/EventIngestion.Api.csproj" />
+    <Project Path="src/Services/EventIngestion/EventIngestion.Application/EventIngestion.Application.csproj" />
+    <Project Path="src/Services/EventIngestion/EventIngestion.Domain/EventIngestion.Domain.csproj" />
+    <Project Path="src/Services/EventIngestion/EventIngestion.Infrastructure/EventIngestion.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AccessControl.IntegrationTests/AccessControl.IntegrationTests.csproj" />
+    <Project Path="tests/AccessControl.UnitTests/AccessControl.UnitTests.csproj" />
+    <Project Path="tests/Alarm.IntegrationTests/Alarm.IntegrationTests.csproj" />
+    <Project Path="tests/Alarm.UnitTests/Alarm.UnitTests.csproj" />
+    <Project Path="tests/ArchitectureTests/ArchitectureTests.csproj" />
+    <Project Path="tests/BuildingBlocks.UnitTests/BuildingBlocks.UnitTests.csproj" />
+    <Project Path="tests/Cardholder.IntegrationTests/Cardholder.IntegrationTests.csproj" />
+    <Project Path="tests/Cardholder.UnitTests/Cardholder.UnitTests.csproj" />
+    <Project Path="tests/EventIngestion.IntegrationTests/EventIngestion.IntegrationTests.csproj" />
+    <Project Path="tests/EventIngestion.UnitTests/EventIngestion.UnitTests.csproj" />
+    <Project Path="tests/Gateway.Tests/Gateway.Tests.csproj" />
+    <Project Path="tests/SiteSimulator.Tests/SiteSimulator.Tests.csproj" />
+    <Project Path="tests/Testing/Testing.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>AccessHub.Contracts.IntegrationEvents</RootNamespace>
+  </PropertyGroup>
+</Project>

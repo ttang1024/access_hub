@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alarm-api
+  labels:
+    app.kubernetes.io/name: alarm-api
+    app.kubernetes.io/part-of: accesshub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alarm-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: alarm-api
+        app.kubernetes.io/part-of: accesshub
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: alarm-api
+          image: accesshub/alarm
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+            - name: ConnectionStrings__alarmdb
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: alarmdb
+            - name: ConnectionStrings__messaging
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: messaging
+            - name: ConnectionStrings__redis
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: redis
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            periodSeconds: 15
+            failureThreshold: 4
+          startupProbe:
+            httpGet:
+              path: /health/live
+              port: http
+            failureThreshold: 30
+            periodSeconds: 2
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alarm-api
+  labels:
+    app.kubernetes.io/name: alarm-api
+spec:
+  selector:
+    app.kubernetes.io/name: alarm-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

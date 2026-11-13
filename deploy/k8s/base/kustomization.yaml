@@ -1,0 +1,16 @@
+# AccessHub application services. Postgres, RabbitMQ (built from deploy/rabbitmq for the delayed exchange plugin),
+# Redis and Keycloak are expected as managed services or separate releases; their connection strings come from the
+# `accesshub-connections` secret (see connections.example.env).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: accesshub
+resources:
+  - configmap.yaml
+  - migrations.yaml
+  - cardholder-api.yaml
+  - access-control-api.yaml
+  - event-ingestion-api.yaml
+  - alarm-api.yaml
+  - gateway.yaml

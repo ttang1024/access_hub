@@ -1,0 +1,172 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cardholder-migrate
+  labels:
+    app.kubernetes.io/part-of: accesshub
+    app.kubernetes.io/component: migration
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: accesshub/cardholder
+          # Applies EF Core migrations and exits (migrations run at startup only in Development).
+          args: ["--migrate"]
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ConnectionStrings__cardholderdb
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: cardholderdb
+            - name: ConnectionStrings__messaging
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: messaging
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: access-control-migrate
+  labels:
+    app.kubernetes.io/part-of: accesshub
+    app.kubernetes.io/component: migration
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: accesshub/accesscontrol
+          # Applies EF Core migrations and exits (migrations run at startup only in Development).
+          args: ["--migrate"]
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ConnectionStrings__accesscontroldb
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: accesscontroldb
+            - name: ConnectionStrings__messaging
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: messaging
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: event-ingestion-migrate
+  labels:
+    app.kubernetes.io/part-of: accesshub
+    app.kubernetes.io/component: migration
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: accesshub/eventingestion
+          # Applies EF Core migrations and exits (migrations run at startup only in Development).
+          args: ["--migrate"]
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ConnectionStrings__ingestiondb
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: ingestiondb
+            - name: ConnectionStrings__messaging
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: messaging
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: alarm-migrate
+  labels:
+    app.kubernetes.io/part-of: accesshub
+    app.kubernetes.io/component: migration
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: accesshub/alarm
+          # Applies EF Core migrations and exits (migrations run at startup only in Development).
+          args: ["--migrate"]
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ConnectionStrings__alarmdb
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: alarmdb
+            - name: ConnectionStrings__messaging
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: messaging
+            - name: ConnectionStrings__redis
+              valueFrom:
+                secretKeyRef:
+                  name: accesshub-connections
+                  key: redis
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]

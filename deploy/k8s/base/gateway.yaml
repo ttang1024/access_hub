@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  labels:
+    app.kubernetes.io/name: gateway
+    app.kubernetes.io/part-of: accesshub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gateway
+        app.kubernetes.io/part-of: accesshub
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: gateway
+          image: accesshub/gateway
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: grpc
+              containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: accesshub-config
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+            - name: GRPC_PORT
+              value: "8081"
+            # Service discovery: Kubernetes Service names, plus the named gRPC endpoint of AccessControl.
+            - name: services__cardholder-api__http__0
+              value: http://cardholder-api
+            - name: services__access-control-api__http__0
+              value: http://access-control-api
+            - name: services__access-control-api__grpc__0
+              value: http://access-control-api:8081
+            - name: services__event-ingestion-api__http__0
+              value: http://event-ingestion-api
+            - name: services__alarm-api__http__0
+              value: http://alarm-api
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 384Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  labels:
+    app.kubernetes.io/name: gateway
+spec:
+  selector:
+    app.kubernetes.io/name: gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: grpc
+      port: 8081
+      targetPort: grpc
+---
+# Operators and the dashboard use HTTPS through the ingress. Site controllers reach the gRPC port
+# (cleartext HTTP/2 inside the cluster); expose it with an h2c-capable load balancer or a TLS-terminating ingress
+# configured for gRPC (for example nginx `backend-protocol: GRPC`).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [accesshub.example.com]
+      secretName: accesshub-tls
+  rules:
+    - host: accesshub.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  name: http

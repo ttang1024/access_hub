@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AccessHub.SiteSimulator</RootNamespace>
+    <UserSecretsId>accesshub-site-simulator</UserSecretsId>
+  </PropertyGroup>
+  <!-- The site controller is the edge deployment of AccessControl: it may reference AccessControl.Domain and Contracts only. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Services\AccessControl\AccessControl.Domain\AccessControl.Domain.csproj" />
+    <ProjectReference Include="..\Contracts\Contracts.Grpc\Contracts.Grpc.csproj" />
+    <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="SiteSimulator.Tests" />
+  </ItemGroup>
+</Project>

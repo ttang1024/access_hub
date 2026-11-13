@@ -1,0 +1,23 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: access-control-api
+spec:
+  minAvailable: 1
+  selector: { matchLabels: { app.kubernetes.io/name: access-control-api } }
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: event-ingestion-api
+spec:
+  minAvailable: 2
+  selector: { matchLabels: { app.kubernetes.io/name: event-ingestion-api } }
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: gateway
+spec:
+  minAvailable: 2
+  selector: { matchLabels: { app.kubernetes.io/name: gateway } }

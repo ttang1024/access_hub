@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet:
+    name: Build, format and test (.NET)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Restore
+        run: dotnet restore
+      - name: Build (warnings are errors)
+        run: dotnet build -warnaserror --no-restore
+      - name: Format check
+        run: dotnet format --verify-no-changes --no-restore
+      - name: Test (Testcontainers uses the runner's Docker)
+        run: dotnet test --no-build
+
+  dashboard:
+    name: Lint and build (dashboard)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: src/Dashboard
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/Dashboard/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

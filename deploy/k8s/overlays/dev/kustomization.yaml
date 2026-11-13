@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: accesshub-dev
+resources:
+  - ../../base
+images:
+  - { name: accesshub/cardholder, newTag: dev }
+  - { name: accesshub/accesscontrol, newTag: dev }
+  - { name: accesshub/eventingestion, newTag: dev }
+  - { name: accesshub/alarm, newTag: dev }
+  - { name: accesshub/gateway, newTag: dev }
+patches:
+  - target: { kind: ConfigMap, name: accesshub-config }
+    patch: |
+      - op: replace
+        path: /data/ASPNETCORE_ENVIRONMENT
+        value: Staging

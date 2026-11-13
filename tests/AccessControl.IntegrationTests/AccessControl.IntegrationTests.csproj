@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Testing\Testing.csproj" />
+    <ProjectReference Include="..\..\src\Services\AccessControl\AccessControl.Api\AccessControl.Api.csproj" />
+    <ProjectReference Include="..\..\src\SiteSimulator\SiteSimulator.csproj" Aliases="simulator" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+  </ItemGroup>
+</Project>
